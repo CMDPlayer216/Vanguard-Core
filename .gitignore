@@ -1,0 +1,6 @@
+publish/*
+publish/
+obj/
+obj/*
+bin/
+bin/*
