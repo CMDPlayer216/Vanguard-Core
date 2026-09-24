@@ -1,4 +1,4 @@
-# Vanguard Core 0.0.1 ALPPHA
+# Vanguard Core 0.1.0 ALPHA
 Interfaz de línea de comandos (CLI) con el objetivo de administrar usuarios en comunidades de roleplay (Teams de Whatsapp, servidores de Discord, etc).
 
 ---
@@ -70,6 +70,7 @@ Opciones:
 - `-t`|`--type`: Tipo de usuario
 - `-F`|`--fandom`: Fandom asignado
 - `-?`|`-h`|`--help`: Mostrar ayuda e información de uso
+- `--raw`: Ofrece salida en formato JSON para integración con CLI o scripts
 
 Ejemplo de uso:
 ```bash
@@ -79,6 +80,14 @@ Resultado:
 ```text
 ZZdLarGA93iR | Shigeo Kageyama
 ID           | Rol principal
+```
+O en crudo:
+```bash
+vanguardb search -p shi -f --raw
+```
+Resultado:
+```text
+[{"primaryRole":"Shigeo Kageyama","id":"ZZdLarGA93iR","version":1,"avatarImageBase64":null,"path":"28c0c96f-01c9-4315-bdb7-03e201b555fb.vud"},{"primaryRole":"Shigeo Kageyama","id":"clZnOalPsnV7","version":1,"avatarImageBase64":null,"path":"a955cd42-e14c-4a6f-9000-7023d6a2802b.vud"}]
 ```
 ### Modificar un usuario
 ```bash
@@ -133,6 +142,14 @@ Roles buscados:
 Última verificación de racha: Nunca
 Racha actual: 0
 ```
+O en crudo:
+```bash
+vanguardb consult ZZdLarGA93iR --raw
+```
+Resultado:
+```text
+{"primaryRole":"Shigeo Kageyama","roles":null,"wantedRoles":null,"id":"ZZdLarGA93iR","version":1,"pronouns":["\u00C9l","He","Him"],"age":18,"creationTime":"2026-09-23T23:25:18.5964779Z","lastStreakVerification":null,"type":2,"pendActions":null,"streak":0,"avatarImageBase64":null,"fandoms":["Mob Psycho 100"]}
+```
 ### Eliminar un usuario
 ```bash
 vanguardb delete <id>
@@ -141,13 +158,56 @@ Ejemplo de uso:
 ```bash
 vanguardb delete ZZdLarGA93iR
 ```
-El programa pedirá confirmación antes de eliminar.
+El programa pedirá confirmación antes de eliminar. Para omitir la confirmación usar `--noconfirm`.
+### Exportar un usuario
+```bash
+vanguardb export user <id> <file>
+```
+Esto generará un archivo con extensión `.vud` en la ruta especificada.
+
+Ejemplo de uso:
+```bash
+vanguardb export user ZZdLarGA93iR ~/shigeo.vud
+# O sin extensión
+vanguardb export user ZZdLarGA93iR ~/shigeo
+```
+Ambos generarán `shigeo.vud`.
+### Exportar base de datos
+```bash
+vanguardb export database <file>
+```
+Esto generará un archivo con extensión `.vdb` en la ruta especificada.
+
+Ejemplo de uso:
+```bash
+vanguardb export database ~/backup-2026-09-24.vdb
+# O sin extensión
+vanguardb export database ~/backup-2026-09-24
+```
+Ambos generarán `backup-2026-09-24.vdb`.
+### Importar usuario
+```bash
+vanguardb import user <file> <CombineKeepingNew | CombineKeepingOriginal | Fail | OverWrite | Skip>
+```
+Esto importará un usuario desde un archivo `.vud`
+### Importar base de datos completa
+```bash
+vanguardb import database <file> <CombineKeepingNew | CombineKeepingOriginal | Fail | OverWrite | Skip>
+```
+Esto importará los usuarios guardados en un archivo `.vdb`
+### Resolución de conflictos
+Hay varias estrategias en caso de que un usuario que se va a importar ya exista:
+- `CombineKeepingOriginal`: Se mantendran los datos actuales pero se combinarán las listas.
+- `CombineKeepingNew`: Se reemplazarán los datos viejos con los nuevos pero se combinarán las listas.
+- `Fail`: La importación fallará.
+- `Skip`: Se omitirá.
+- `OverWrite`: Se sobreescribirá por completo.
 
 ---
 ## Estructura del proyecto
 ### Tecnologías usadas
-- `MessagePack` para serializar usuarios en archivos `<GUID.vud>` (Vanguard User Data) y el índice en un archivo `<index.ivdb>` (Index Vanguard Data Base)
-- `System.CommandLine` para parseo de comandos
+- `MessagePack` para serializar usuarios en archivos `<GUID.vud>` (Vanguard User Data), el índice en un archivo `<index.ivdb>` (Index Vanguard Data Base) y archivos de distribución de base de datos `.vdb` (Vanguard Data Base).
+- `System.CommandLine` para parseo de comandos.
 ### Estructura de archivos
 ```text
 ̣̣Vanguard-Core/
@@ -167,18 +227,24 @@ El programa pedirá confirmación antes de eliminar.
 |   | - AddCommand.cs            # Comando add
 |   | - ConsultCommandBuilder.cs # Comando consullt
 |   | - DeleteCommandBuilder.cs  # Comando delete
+|   | - ExportCommand.cs         # Comando de exportación
+|   | - ImportCommand.cs         # Comando de importación
 |   | - ModifyCommand.cs         # Comando modify
 |   | - SearchCommand.cs         # Comando search
 | - Commands/            # Lógica de comandos
 |   | - AddCommand.cs            # Comando add
 |   | - ConsultCommand.cs        # Comando consullt
 |   | - DeleteCommand.cs         # Comando delete
+|   | - DataCommand.cs           # Comandos de importación y exportación
 |   | - ModifyCommand.cs         # Comando modify
 |   | - SearchCommand.cs         # Comando search
 | - Dataservices/        # Operaciones directas en la base de datos
 |   | - Delete.cs                # Operaciónes de eliminación
+|   | - Export.cs                # Lógica de exportación
+|   | - Import.cs                # Lógica de importación
 |   | - LockDataBase.cs          # Sistema de bloqueo de base de datos
 |   | - Modify.cs                # Operaciónes de modificación
+|   | - Pack.cs                  # Ayuda a desempaquetar bases de datos
 |   | - Query.cs                 # Operaciones de consulta
 |   | - Write.cs                 # Operaciones de escritura
 | - Models/              # Objetos reutilizables

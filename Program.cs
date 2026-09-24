@@ -15,11 +15,16 @@ public static class Program
         Command consultCommand = Builders.ConsultCommandBuilder.Build(gConfig);
         Command deleteCommand = Builders.DeleteCommandBuilder.Build(gConfig);
         Command modifyCommand = Builders.ModifyCommand.Build(gConfig);
+        Command importCommand = Builders.ImportCommand.Build(gConfig);
+        Command exportCommand = Builders.ExportCommand.Build(gConfig);
+
+        rootCommand.Add(importCommand);
         rootCommand.Add(addCommand);
         rootCommand.Add(searchCommand);
         rootCommand.Add(consultCommand);
         rootCommand.Add(deleteCommand);
         rootCommand.Add(modifyCommand);
+        rootCommand.Add(exportCommand);
 
         return await rootCommand.Parse(args).InvokeAsync();
     }

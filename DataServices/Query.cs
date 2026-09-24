@@ -20,6 +20,12 @@ public static class Query
             return null;
         }
     }
+    public static User? LoadUserByPath(string userPath)
+    {
+        if (!File.Exists(userPath)) return null;
+        byte[] rawUser = File.ReadAllBytes(userPath);
+        return MessagePackSerializer.Deserialize<User>(rawUser);
+    }
     public static User? LoadUserByFileName(string FileName, Config gConfig)
     {
         string userPath = Path.Combine(gConfig.DataBasePath, FileName);

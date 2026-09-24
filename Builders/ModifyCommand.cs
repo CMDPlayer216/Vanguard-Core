@@ -9,10 +9,11 @@ public static class ModifyCommand
     {
         var command = new Command("modify", "Modificar un usuario existente");
 
-        var idOption = new Option<string>(
-            "-u", "--user-id")
+        var idOption = new Argument<string>(
+            "user-id")
         {
-            Description = "ID del usuario a modificar"
+            Description = "ID del usuario a modificar",
+            Arity = ArgumentArity.ExactlyOne
         };
 
         var primaryRoleOption = new Option<string?>(
