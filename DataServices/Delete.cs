@@ -9,8 +9,8 @@ public static class Delete
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
         if (!dbLock.Acquire())
         {
-            DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            Environment.Exit(2);
+            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            
         }
         List<IndexEntry>? Index = Query.Index(gConfig);
         if (Index == null || Index.Count == 0) return DeleteResult.UserDoNotExistException;

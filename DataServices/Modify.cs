@@ -10,7 +10,7 @@ public static class Modify
         if (!dbLock.Acquire())
         {
             DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            Environment.Exit(2);
+            
         }
         if (!ValidateModifications(changes)) return ModifyResult.InvalidModificationsException;
         List<IndexEntry>? Index = Query.Index(gConfig);

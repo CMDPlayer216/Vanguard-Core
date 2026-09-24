@@ -12,8 +12,10 @@ public static class DeleteCommandBuilder
             Arity = ArgumentArity.ExactlyOne,
             Description = "ID del usuario que quieres eliminar"
         };
+        var noConfirmOption = new Option<bool>("--noconfirm") { Description = "Omite la confirmación. USAR CON PRECAUCIÓN" };
 
         command.Add(idArgument);
+        command.Add(noConfirmOption);
 
         command.SetAction(p =>
         {
@@ -23,7 +25,7 @@ public static class DeleteCommandBuilder
                 DrawText("ID inválido.");
                 return;
             }
-            Commands.DeleteCommand.Run(id, gConfig);
+            Commands.DeleteCommand.Run(id, p.GetValue(noConfirmOption), gConfig);
         });
 
         return command;

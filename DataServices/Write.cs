@@ -11,8 +11,8 @@ public static class Write
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
         if (!dbLock.Acquire())
         {
-            DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            Environment.Exit(2);
+            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+
         }
         bool isValidUser = ValidateUser(user);
         if (!isValidUser) return WriteResult.InvalidUserException;
@@ -57,8 +57,8 @@ public static class Write
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
         if (!dbLock.Acquire())
         {
-            DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            Environment.Exit(2);
+            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+
         }
         Index ??= Query.Index(gConfig);
         Index ??= [];
@@ -97,8 +97,8 @@ public static class Write
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
         if (!dbLock.Acquire())
         {
-            DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            Environment.Exit(2);
+            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+
         }
         string indexPath = Path.Combine(gConfig.ConfigPath, "index.ivdb");
         byte[] serializedIndex = MessagePackSerializer.Serialize(Index);

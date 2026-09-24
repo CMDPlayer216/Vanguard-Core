@@ -16,16 +16,16 @@ public static class AddCommand
     {
         if (primaryRole == null || pronouns == null || fandoms == null)
         {
-            DrawText("Los datos introducidos son inválidos.", Color.Red);
-            DrawText($"primaryRol: {primaryRole}, pronouns {pronouns}, age: {age}");
-            DrawText("");
-            DrawText("  --> Caracteres válidos para IDs: ", newLine: false);
-            DrawText(Validators.UserValidators.IdValidChars, Color.Green);
-            DrawText("  --> Caracteres válidos para otros textos: ", newLine: false);
-            DrawText(Validators.UserValidators.OtherValidChars, Color.Green);
-            DrawText($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}");
-            DrawText($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}");
-            DrawText($"  --> Formato de fecha: yyyy-MM-dd");
+            DrawError("Los datos introducidos son inválidos.", Color.Red);
+            DrawError($"primaryRol: {primaryRole}, pronouns {pronouns}, age: {age}");
+            DrawError("");
+            DrawError("  --> Caracteres válidos para IDs: ", newLine: false);
+            DrawError(Validators.UserValidators.IdValidChars, Color.Green);
+            DrawError("  --> Caracteres válidos para otros textos: ", newLine: false);
+            DrawError(Validators.UserValidators.OtherValidChars, Color.Green);
+            DrawError($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}");
+            DrawError($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}");
+            DrawError($"  --> Formato de fecha: yyyy-MM-dd");
             return;
         }
         byte[]? image = null;
@@ -33,7 +33,7 @@ public static class AddCommand
         {
             if (!File.Exists(imagePath))
             {
-                DrawText("Esa imágen no existe.", Color.Red);
+                DrawError("Esa imágen no existe.", Color.Red);
                 return;
             }
             image = File.ReadAllBytes(imagePath);
@@ -59,36 +59,36 @@ public static class AddCommand
         {
             case WriteResult.InvalidUserException:
                 {
-                    DrawText("Los datos introducidos son inválidos.", Color.Red);
-                    DrawText("");
-                    DrawText("  --> Caracteres válidos para IDs: ", newLine: false);
-                    DrawText(Validators.UserValidators.IdValidChars, Color.Green);
-                    DrawText("  --> Caracteres válidos para otros textos: ", newLine: false);
-                    DrawText(Validators.UserValidators.OtherValidChars, Color.Green);
-                    DrawText($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}");
-                    DrawText($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}");
-                    DrawText($"  --> Formato de fecha: yyyy-MM-dd");
+                    DrawError("Los datos introducidos son inválidos.", Color.Red);
+                    DrawError("");
+                    DrawError("  --> Caracteres válidos para IDs: ", newLine: false);
+                    DrawError(Validators.UserValidators.IdValidChars, Color.Green);
+                    DrawError("  --> Caracteres válidos para otros textos: ", newLine: false);
+                    DrawError(Validators.UserValidators.OtherValidChars, Color.Green);
+                    DrawError($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}");
+                    DrawError($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}");
+                    DrawError($"  --> Formato de fecha: yyyy-MM-dd");
                     break;
                 }
             case WriteResult.DirectoryNotFoundException:
                 {
-                    DrawText("Error: Directorio de base de datos no encontrado, regenerando...", Color.Red);
+                    DrawError("Error: Directorio de base de datos no encontrado, regenerando...", Color.Red);
                     Validators.FileSystemValidators.AllFileSystem(gConfig);
                     break;
                 }
             case WriteResult.UnauthorizedAccessException:
                 {
-                    DrawText("Error: El sistema operativo denegó el acceso al sistema de archivos.", Color.Red);
+                    DrawError("Error: El sistema operativo denegó el acceso al sistema de archivos.", Color.Red);
                     break;
                 }
             case WriteResult.IOException:
                 {
-                    DrawText("Error desconocido en el sistema de archivos.", Color.Red);
+                    DrawError("Error desconocido en el sistema de archivos.", Color.Red);
                     break;
                 }
             case WriteResult.DefaultException:
                 {
-                    DrawText("Error desconocido.", Color.Red);
+                    DrawError("Error desconocido.", Color.Red);
                     break;
                 }
             case WriteResult.Success:

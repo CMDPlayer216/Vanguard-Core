@@ -12,8 +12,10 @@ public static class ConsultCommandBuilder
             Arity = ArgumentArity.ExactlyOne,
             Description = "ID del usuario que quieres consultar"
         };
+        var rawOption = new Option<bool>("--raw") { Description = "Imprime la salida en JSON" };
 
         command.Add(idArgument);
+        command.Add(rawOption);
 
         command.SetAction(p =>
         {
@@ -23,7 +25,7 @@ public static class ConsultCommandBuilder
                 DrawText("ID inválido.");
                 return;
             }
-            Commands.ConsultCommand.Run(id, gConfig);
+            Commands.ConsultCommand.Run(id, p.GetValue(rawOption), gConfig);
         });
 
         return command;

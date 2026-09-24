@@ -27,6 +27,7 @@ public static class SearchCommand
         var maxLastStreakOption = new Option<DateOnly?>("--max-last-streak-date") { Description = "Fecha máxima de verificación de racha" };
         var typeOption = new Option<UserType?>("-t", "--type") { Description = "Tipo de usuario" };
         var fandomOption = new Option<string>("-F", "--fandom") { Description = "Fandom asignado" };
+        var rawOption = new Option<bool>("--raw") { Description = "Imprime la salida en JSON" };
 
         ageOption.DefaultValueFactory = null;
         minAgeOption.DefaultValueFactory = null;
@@ -55,6 +56,8 @@ public static class SearchCommand
         command.Add(maxLastStreakOption);
         command.Add(typeOption);
         command.Add(fandomOption);
+        command.Add(rawOption);
+        command.Add(rawOption);
 
         command.SetAction(p =>
         {
@@ -75,6 +78,7 @@ public static class SearchCommand
             DateOnly? maxLastStreak = p.GetValue(maxLastStreakOption);
             UserType? type = p.GetValue(typeOption);
             string? fandom = p.GetValue(fandomOption);
+            bool raw = p.GetValue(rawOption);
 
             SearchFilters filters = new()
             {
@@ -94,7 +98,8 @@ public static class SearchCommand
                 MinLastStreakVerification = minLastStreak,
                 MaxLastStreakVerification = maxLastStreak,
                 Type = type,
-                Fandom = fandom
+                Fandom = fandom,
+                RawOutput = raw
             };
             
             Commands.SearchCommand.Run(filters, gConfig);

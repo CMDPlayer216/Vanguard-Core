@@ -1,3 +1,4 @@
+using System.Text.Json;
 using VanguardCore.DataServices;
 
 namespace VanguardCore.Commands;
@@ -21,7 +22,7 @@ public static class SearchCommand
         List<IndexEntry>? Index = Query.Index(gConfig);
         if (Index == null)
         {
-            DrawText("No hay usuarios registrados.", Color.Red);
+            DrawError("No hay usuarios registrados.", Color.Red);
             return;
         }
         if (isFastSearchAviable && filters.FastSearch)
@@ -57,7 +58,7 @@ public static class SearchCommand
                 User? user = Query.LoadUserByFileName(entry.Path, gConfig);
                 if (user == null)
                 {
-                    DrawText($"Usuario inválido encontrado en {entry.Path}");
+                    DrawError($"Usuario inválido encontrado en {entry.Path}");
                     continue;
                 }
                 // Primero comprobamos números
@@ -217,19 +218,28 @@ public static class SearchCommand
             }
         }
         if (matches.Count == 0)
-            {
-                DrawText("No hay resultados.", Color.Red);
-                return;
-            }
-        foreach (IndexEntry result in matches)
         {
-            DrawText($"{result.Id}", Color.Green, false);
-            DrawText(" | ", Color.Gray, false);
-            DrawText($"{result.PrimaryRole}");
+            DrawError("No hay resultados.", Color.Red);
+            return;
         }
-        DrawText("ID          ", Color.Yellow, false);
-        DrawText(" | ", Color.Gray, false);
-        DrawText("Rol principal", Color.Yellow);
+        if (filters.RawOutput)
+        {
+            string? entryJson = JsonSerializer.Serialize(matches);
+            DrawText(entryJson);
+        }
+        else
+        {
+
+            foreach (IndexEntry result in matches)
+            {
+                DrawText($"{result.Id}", Color.Green, false);
+                DrawText(" | ", Color.Gray, false);
+                DrawText($"{result.PrimaryRole}");
+            }
+            DrawText("ID          ", Color.Yellow, false);
+            DrawText(" | ", Color.Gray, false);
+            DrawText("Rol principal", Color.Yellow);
+        }
     }
 
     private static bool IsInRangeMatch(int? min, int? max, int value)

@@ -2,6 +2,7 @@ namespace VanguardCore.Models;
 
 public class SearchFilters
 {
+
     public string? PrimaryRole { get; set; }
     public string? Id { get; set; }
     public string? Rol { get; set; }
@@ -23,4 +24,5 @@ public class SearchFilters
     public int? MaxStreak { get; set; }
     public string? Fandom { get; set; }
     public bool FastSearch { get; set; }
+    public bool RawOutput { get; set; }
 }

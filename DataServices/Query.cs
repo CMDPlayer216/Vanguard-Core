@@ -14,8 +14,9 @@ public static class Query
             if (rawIndex.Length == 0) return [];
             return MessagePackSerializer.Deserialize<List<IndexEntry>>(rawIndex);
         }
-        catch
+        catch (Exception ex)
         {
+            DrawError($"ERROR: {ex.Message}", Color.Red);
             return null;
         }
     }
