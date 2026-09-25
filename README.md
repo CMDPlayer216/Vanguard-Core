@@ -202,12 +202,34 @@ Hay varias estrategias en caso de que un usuario que se va a importar ya exista:
 - `Fail`: La importación fallará.
 - `Skip`: Se omitirá.
 - `OverWrite`: Se sobreescribirá por completo.
+### Configuración
+La configuración se guarda en un archivo `config.yaml`, puedes consultar en dónde se está guardando la configuración con:
+```bash
+vanguardb config get configPath
+```
+Archivo de configuración de ejemplo:
+```YAML
+# Directorio donde se guardarán los archivos .vud.
+# El índice se guarda en el directorio de configuración.
+#
+# =====================================
+# ============ ADVERTENCIA ============
+# =====================================
+#
+# Cambiar esta configuración puede conllevar a pérdida de datos.
+# Manejar con cuidado.
+data_base_path: /home/gabriel/.local/share/vanguardb
+
+# Directorio de archivos temporales
+temp_path: /tmp/
+```
 
 ---
 ## Estructura del proyecto
 ### Tecnologías usadas
 - `MessagePack` para serializar usuarios en archivos `<GUID.vud>` (Vanguard User Data), el índice en un archivo `<index.ivdb>` (Index Vanguard Data Base) y archivos de distribución de base de datos `.vdb` (Vanguard Data Base).
 - `System.CommandLine` para parseo de comandos.
+- `YamlDotNet` para configuración.
 ### Estructura de archivos
 ```text
 ̣̣Vanguard-Core/
@@ -225,6 +247,7 @@ Hay varias estrategias en caso de que un usuario que se va a importar ya exista:
 |   | - ConsoleHelper.cs         # Utilidad para dibujar en consola
 | - Builders/            # Constructores de subcomandos
 |   | - AddCommand.cs            # Comando add
+|   | - ConfigCommand.cs         # Comando config
 |   | - ConsultCommandBuilder.cs # Comando consullt
 |   | - DeleteCommandBuilder.cs  # Comando delete
 |   | - ExportCommand.cs         # Comando de exportación
@@ -233,12 +256,14 @@ Hay varias estrategias en caso de que un usuario que se va a importar ya exista:
 |   | - SearchCommand.cs         # Comando search
 | - Commands/            # Lógica de comandos
 |   | - AddCommand.cs            # Comando add
+|   | - ConfigCommand.cs         # Comando config
 |   | - ConsultCommand.cs        # Comando consullt
 |   | - DeleteCommand.cs         # Comando delete
 |   | - DataCommand.cs           # Comandos de importación y exportación
 |   | - ModifyCommand.cs         # Comando modify
 |   | - SearchCommand.cs         # Comando search
 | - Dataservices/        # Operaciones directas en la base de datos
+|   | - Config.cs                # Lógica para obtener y guardar configuraciones
 |   | - Delete.cs                # Operaciónes de eliminación
 |   | - Export.cs                # Lógica de exportación
 |   | - Import.cs                # Lógica de importación
