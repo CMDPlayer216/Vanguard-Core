@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace VanguardCore;
 
@@ -7,7 +9,7 @@ public static class Program
     public static async Task<int> Main(string[] args)
     {
         var rootCommand = new RootCommand("Vanguard Core - CLI de administración de usuarios");
-        Config gConfig = new();
+        Config gConfig = DataServices.Conf.GetConfig();
         Validators.FileSystemValidators.AllFileSystem(gConfig);
 
         Command addCommand = Builders.AddCommand.Build(gConfig);
@@ -17,6 +19,7 @@ public static class Program
         Command modifyCommand = Builders.ModifyCommand.Build(gConfig);
         Command importCommand = Builders.ImportCommand.Build(gConfig);
         Command exportCommand = Builders.ExportCommand.Build(gConfig);
+        Command configCommand = Builders.ConfigCommand.Build(gConfig);
 
         rootCommand.Add(importCommand);
         rootCommand.Add(addCommand);
@@ -25,6 +28,7 @@ public static class Program
         rootCommand.Add(deleteCommand);
         rootCommand.Add(modifyCommand);
         rootCommand.Add(exportCommand);
+        rootCommand.Add(configCommand);
 
         return await rootCommand.Parse(args).InvokeAsync();
     }

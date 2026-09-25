@@ -5,7 +5,7 @@ set -e
 
 REPO="CMDPlayer216/Vanguard-Core"
 INSTALL_DIR="$HOME/.local/bin"
-BINARY_NAME="VanguardCore"
+BINARY_NAME="vanguardb"
 
 # Colores
 GREEN='\033[0;32m'
