@@ -82,7 +82,7 @@ public static class DataCommand
                 Environment.Exit(1);
             }
 
-            ImportResult result = DataServices.Import.Users(users, gConfig, mode);
+            ImportResult result = DataServices.Import.Users(users, gConfig, mode, true);
 
             switch (result)
             {

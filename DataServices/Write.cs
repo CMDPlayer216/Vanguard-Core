@@ -6,13 +6,15 @@ namespace VanguardCore.DataServices;
 
 public static class Write
 {
-    public static WriteResult AddUser(User user, Config gConfig)
+    public static WriteResult AddUser(User user, Config gConfig, bool isLockAcquired = false)
     {
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
-        if (!dbLock.Acquire())
+        if (!isLockAcquired)
         {
-            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
-
+            if (!dbLock.Acquire())
+            {
+                DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            }
         }
         bool isValidUser = ValidateUser(user);
         if (!isValidUser) return WriteResult.InvalidUserException;
@@ -39,7 +41,7 @@ public static class Write
         {
             return WriteResult.DefaultException;
         }
-        WriteResult result = AddIndexEntry(newEntry, gConfig);
+        WriteResult result = AddIndexEntry(newEntry, gConfig, isLockAcquired: true);
         if (result != WriteResult.Success)
         {
             try
@@ -52,13 +54,15 @@ public static class Write
         }
         return result;
     }
-    private static WriteResult AddIndexEntry(IndexEntry Entry, Config gConfig, List<IndexEntry>? Index = null)
+    private static WriteResult AddIndexEntry(IndexEntry Entry, Config gConfig, List<IndexEntry>? Index = null, bool isLockAcquired = false)
     {
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
-        if (!dbLock.Acquire())
+        if (!isLockAcquired)
         {
-            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
-
+            if (!dbLock.Acquire())
+            {
+                DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            }
         }
         Index ??= Query.Index(gConfig);
         Index ??= [];
@@ -92,13 +96,15 @@ public static class Write
         }
         return WriteResult.Success;
     }
-    public static WriteResult OverWriteIndex(Config gConfig, List<IndexEntry> Index)
+    public static WriteResult OverWriteIndex(Config gConfig, List<IndexEntry> Index, bool isLockAcquired = false)
     {
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
-        if (!dbLock.Acquire())
+        if (!isLockAcquired)
         {
-            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
-
+            if (!dbLock.Acquire())
+            {
+                DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            }
         }
         string indexPath = Path.Combine(gConfig.ConfigPath, "index.ivdb");
         byte[] serializedIndex = MessagePackSerializer.Serialize(Index);

@@ -9,14 +9,17 @@ public static class Import
     public static ImportResult Users(
         List<User>? users,
         Config gConfig,
-        ConflictMode mode)
+        ConflictMode mode,
+        bool isLockAcquired = false)
     {
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
 
-        if (!dbLock.Acquire())
+        if (!isLockAcquired)
         {
-            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
-            return ImportResult.Failed;
+            if (!dbLock.Acquire())
+            {
+                DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            }
         }
 
         if (users == null || users.Count == 0)
@@ -352,7 +355,7 @@ public static class Import
         List<IndexEntry>? index = Query.Index(gConfig);
         if (index == null)
         {
-            return MapWriteResult(Write.AddUser(user, gConfig));
+            return MapWriteResult(Write.AddUser(user, gConfig, true));
         }
 
         // Buscar el elemento en el índice sin modificar la colección durante la iteración
@@ -361,7 +364,7 @@ public static class Import
         if (existingIndex == -1)
         {
             // El usuario no existe previamente en el índice
-            return MapWriteResult(Write.AddUser(user, gConfig));
+            return MapWriteResult(Write.AddUser(user, gConfig, true));
         }
 
         IndexEntry existingEntry = index[existingIndex];

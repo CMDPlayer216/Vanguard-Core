@@ -4,9 +4,9 @@ namespace VanguardCore.Models;
 public class Config
 {
     [YamlIgnore]
-    public int Version { get; } = 4;
+    public int Version { get; } = 6;
     [YamlIgnore]
-    public string VersionName { get; } = "0.2.2 RELEASE CANDIDATE 1";
+    public string VersionName { get; } = "0.2.3 RELEASE CANDIDATE 2";
     [YamlIgnore]
     public string ConfigPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "vanguardb");
     [YamlMember(Alias = "DataBasePath")]
