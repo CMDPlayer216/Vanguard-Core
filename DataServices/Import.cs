@@ -316,21 +316,21 @@ public static class Import
 
         try
         {
-            // Renombrar la carpeta actual a backup
-            Directory.Move(gConfig.DataBasePath, rutaBackup);
+            // 1. Renombrar la carpeta actual a backup
+            MoverDirectorioSeguro(gConfig.DataBasePath, rutaBackup);
 
-            // Publicar la carpeta temporal como la nueva carpeta de base de datos
-            Directory.Move(tempUsersPath, gConfig.DataBasePath);
+            // 2. Publicar la carpeta temporal como la nueva carpeta de base de datos
+            MoverDirectorioSeguro(tempUsersPath, gConfig.DataBasePath);
 
-            // Eliminar el respaldo de la base de datos vieja
+            // 3. Eliminar el respaldo de la base de datos vieja
             Directory.Delete(rutaBackup, recursive: true);
         }
         catch
         {
-            // Si ocurre un error durante el movimiento, se restaura la base de datos previa
+            // Si la carpeta original no existe y quedó el backup, intentamos restaurar
             if (!Directory.Exists(gConfig.DataBasePath) && Directory.Exists(rutaBackup))
             {
-                Directory.Move(rutaBackup, gConfig.DataBasePath);
+                MoverDirectorioSeguro(rutaBackup, gConfig.DataBasePath);
             }
             throw;
         }
@@ -339,6 +339,37 @@ public static class Import
         // ESCRIBIR EL ÍNDICE UNA SOLA VEZ
         // -------------------------------------------------------------
         return OverWriteIndex(index, gConfig);
+    }
+    private static void MoverDirectorioSeguro(string origen, string destino)
+    {
+        try
+        {
+            // Intento rápido de renombrado a nivel de SO
+            Directory.Move(origen, destino);
+        }
+        catch (IOException)
+        {
+            // Fallback cuando se intenta mover entre volúmenes/discos distintos (Invalid cross-device link)
+            CopiarDirectorioRecursivo(origen, destino);
+            Directory.Delete(origen, recursive: true);
+        }
+    }
+
+    private static void CopiarDirectorioRecursivo(string origen, string destino)
+    {
+        Directory.CreateDirectory(destino);
+
+        foreach (string archivo in Directory.GetFiles(origen))
+        {
+            string archivoDestino = Path.Combine(destino, Path.GetFileName(archivo));
+            File.Copy(archivo, archivoDestino, overwrite: true);
+        }
+
+        foreach (string subDirectorio in Directory.GetDirectories(origen))
+        {
+            string subDirectorioDestino = Path.Combine(destino, Path.GetFileName(subDirectorio));
+            CopiarDirectorioRecursivo(subDirectorio, subDirectorioDestino);
+        }
     }
     public static ImportResult User(User user, Config gConfig, ConflictMode mode)
     {

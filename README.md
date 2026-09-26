@@ -1,4 +1,4 @@
-# Vanguard Core 0.2.1 BETA
+# Vanguard Core 0.2.4 RELEASE CANDIDATE 3
 Interfaz de línea de comandos (CLI) con el objetivo de administrar usuarios en comunidades de roleplay (Teams de Whatsapp, servidores de Discord, etc).
 
 ---

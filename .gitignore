@@ -7,3 +7,4 @@ bin/*
 .vscode/
 .vscode/*
 *.zip
+Auto-test/*.json
