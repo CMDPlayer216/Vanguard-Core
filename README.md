@@ -1,4 +1,4 @@
-# Vanguard Core 0.2.0 BETA
+# Vanguard Core 0.2.1 BETA
 Interfaz de línea de comandos (CLI) con el objetivo de administrar usuarios en comunidades de roleplay (Teams de Whatsapp, servidores de Discord, etc).
 
 ---

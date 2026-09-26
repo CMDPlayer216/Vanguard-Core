@@ -8,6 +8,7 @@ public class DatabaseLock : IDisposable
 {
     private readonly string _lockFilePath;
     private bool _isLocked = false;
+
     public DatabaseLock(string dbDirectory)
     {
         _lockFilePath = Path.Combine(dbDirectory, "vanguarddb.lock");
@@ -19,77 +20,60 @@ public class DatabaseLock : IDisposable
 
     public bool Acquire()
     {
-        if (File.Exists(_lockFilePath))
-        {
-            // 1. Verificar si el lock pertenece a ESTE MISMO proceso
-            if (IsOwnedByCurrentProcess())
-            {
-                _isLocked = true;
-                return true; // Permitir reentrancia/llamadas anidadas
-            }
-
-            // 2. Verificar si es un lock huérfano de una sesión anterior
-            if (IsStaleLock())
-            {
-                Release();
-            }
-            else
-            {
-                return false; // Bloqueado por OTRO proceso distinto
-            }
-        }
-
         try
         {
-            // Escribir el PID actual en el archivo lock
-            File.WriteAllText(_lockFilePath, Environment.ProcessId.ToString());
+            // Intentar crear el archivo de forma atómica
+            using (FileStream fs = File.Open(_lockFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            using (StreamWriter writer = new(fs))
+            {
+                writer.Write(Environment.ProcessId.ToString());
+            }
+
             _isLocked = true;
             return true;
         }
+        catch (IOException)
+        {
+            // El archivo YA EXISTE.
+            // Si está huérfano, se elimina y se reintenta adquirir.
+            if (IsStaleLock())
+            {
+                DeleteLockFile();
+                return Acquire(); // Reintentar adquisición
+            }
+
+            // Está bloqueado por otro proceso activo
+            return false;
+        }
         catch (Exception ex)
         {
-            DrawText($"[Error] No se pudo crear el archivo lock: {ex.Message}", Color.Red);
+            Console.WriteLine($"[Error] No se pudo crear el archivo lock: {ex.Message}");
             return false;
         }
     }
 
-    private bool IsOwnedByCurrentProcess()
-    {
-        try
-        {
-            string content = File.ReadAllText(_lockFilePath).Trim();
-            if (int.TryParse(content, out int pid))
-            {
-                return pid == Environment.ProcessId;
-            }
-        }
-        catch { }
-        return false;
-    }
-
     public void Release()
     {
-        if (_isLocked && File.Exists(_lockFilePath))
+        if (_isLocked)
         {
-            try
-            {
-                File.Delete(_lockFilePath);
-            }
-            catch { }
+            DeleteLockFile();
+            _isLocked = false;
         }
-        _isLocked = false;
     }
 
     private bool IsStaleLock()
     {
         try
         {
-            string content = File.ReadAllText(_lockFilePath).Trim();
-            if (int.TryParse(content, out int pid))
+            if (File.Exists(_lockFilePath))
             {
-                // Si el proceso guardado en el .lock NO está corriendo, el lock es huérfano
-                Process.GetProcessById(pid);
-                return false; // El proceso sigue vivo
+                string content = File.ReadAllText(_lockFilePath).Trim();
+                if (int.TryParse(content, out int pid))
+                {
+                    // Si el proceso guardado NO está corriendo, el lock es huérfano
+                    Process.GetProcessById(pid);
+                    return false; // El proceso sigue vivo
+                }
             }
         }
         catch (ArgumentException)
@@ -99,21 +83,31 @@ public class DatabaseLock : IDisposable
         }
         catch
         {
-            // Ante cualquier error de lectura, asumimos que no se puede validar
+            // Ante cualquier error de lectura/acceso, se asume que no se puede considerar huérfano
         }
 
         return false;
     }
 
+    private void DeleteLockFile()
+    {
+        try
+        {
+            if (File.Exists(_lockFilePath))
+            {
+                File.Delete(_lockFilePath);
+            }
+        }
+        catch { }
+    }
+
     private void OnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
     {
-        // Ocurre al presionar Ctrl+C o Ctrl+Break
         Release();
     }
 
     private void OnProcessExit(object? sender, EventArgs e)
     {
-        // Ocurre al cerrar la aplicación de forma normal o por señal de salida (SIGTERM)
         Release();
     }
 
