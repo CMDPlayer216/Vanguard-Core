@@ -6,7 +6,7 @@ public class Config
     [YamlIgnore]
     public int Version { get; } = 4;
     [YamlIgnore]
-    public string VersionName { get; } = "0.2.1 BETA";
+    public string VersionName { get; } = "0.2.2 RELEASE CANDIDATE 1";
     [YamlIgnore]
     public string ConfigPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "vanguardb");
     [YamlMember(Alias = "DataBasePath")]

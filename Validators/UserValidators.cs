@@ -83,7 +83,8 @@ public static class UserValidators
         return ValidateAge(user.Age) && ValidateId(user.Id)
             && ValidateStreak(user.Streak) && ValidateString(user.PrimaryRole)
             && ValidateStrings(user.Pronouns) && ValidateUnnecesaryStrings(user.Roles)
-            && ValidateUnnecesaryStrings(user.WantedRoles) && ValidateVersion(user.Version);
+            && ValidateUnnecesaryStrings(user.WantedRoles) && ValidateVersion(user.Version)
+            && ValidateStrings(user.Fandoms);
     }
     public static bool ValidateModifications(ModifyingUser user)
     {

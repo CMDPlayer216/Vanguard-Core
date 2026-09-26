@@ -1,3 +1,4 @@
+using System.IO;
 using MessagePack;
 using static VanguardCore.Validators.UserValidators;
 
@@ -33,6 +34,9 @@ public static class Import
         // Si no existe índice, creamos uno nuevo en memoria.
         index ??= [];
 
+        string tempUsersPath = Path.Combine(gConfig.TempPath, Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempUsersPath);
+
         foreach (User user in users)
         {
             int existingIndex = index.FindIndex(e => e.Id == user.Id);
@@ -51,7 +55,7 @@ public static class Import
                 };
 
                 string userPath = Path.Combine(
-                    gConfig.DataBasePath,
+                    tempUsersPath,
                     newEntry.Path);
 
                 try
@@ -264,7 +268,7 @@ public static class Import
             // GUARDAR USUARIO
             // ---------------------------------------------------------
             string path = Path.Combine(
-                gConfig.DataBasePath,
+                tempUsersPath,
                 existingEntry.Path);
 
             try
@@ -290,6 +294,42 @@ public static class Import
             {
                 return ImportResult.DefaultException;
             }
+        }
+
+        foreach (string archivoDestino in Directory.GetFiles(gConfig.DataBasePath))
+        {
+            string nombreArchivo = Path.GetFileName(archivoDestino);
+            string rutaEnTemp = Path.Combine(tempUsersPath, nombreArchivo);
+
+            if (!File.Exists(rutaEnTemp))
+            {
+                File.Copy(archivoDestino, rutaEnTemp);
+            }
+        }
+
+        // 2. Intercambio atómico
+        string directorioPadre = Path.GetDirectoryName(Path.GetFullPath(gConfig.DataBasePath))!;
+        string rutaBackup = Path.Combine(directorioPadre, $"_db_backup_{Guid.NewGuid():N}");
+
+        try
+        {
+            // Renombrar la carpeta actual a backup
+            Directory.Move(gConfig.DataBasePath, rutaBackup);
+
+            // Publicar la carpeta temporal como la nueva carpeta de base de datos
+            Directory.Move(tempUsersPath, gConfig.DataBasePath);
+
+            // Eliminar el respaldo de la base de datos vieja
+            Directory.Delete(rutaBackup, recursive: true);
+        }
+        catch
+        {
+            // Si ocurre un error durante el movimiento, se restaura la base de datos previa
+            if (!Directory.Exists(gConfig.DataBasePath) && Directory.Exists(rutaBackup))
+            {
+                Directory.Move(rutaBackup, gConfig.DataBasePath);
+            }
+            throw;
         }
 
         // -------------------------------------------------------------
@@ -449,10 +489,14 @@ public static class Import
     private static ImportResult OverWriteIndex(List<IndexEntry> index, Config gConfig)
     {
         string indexPath = Path.Combine(gConfig.ConfigPath, "index.ivdb");
+        string tempIndexPath = Path.Combine(gConfig.ConfigPath, "index.ivdb.tmp");
+        string backupIndexPath = Path.Combine(gConfig.ConfigPath, "index.ivdb.bak");
         try
         {
             byte[] serializedIndex = MessagePackSerializer.Serialize(index);
-            File.WriteAllBytes(indexPath, serializedIndex);
+            File.WriteAllBytes(tempIndexPath, serializedIndex);
+            File.Copy(indexPath, backupIndexPath, overwrite: true);
+            File.Copy(tempIndexPath, indexPath, overwrite: true);
         }
         catch (DirectoryNotFoundException) { return ImportResult.DirectoryNotFoundException; }
         catch (UnauthorizedAccessException) { return ImportResult.UnauthorizedAccessException; }

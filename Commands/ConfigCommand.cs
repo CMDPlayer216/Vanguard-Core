@@ -17,7 +17,12 @@ public static class ConfigCommand
     }
     public static void SetConfig(ConfigSetType type, string newConfigValue, Config config)
     {
-        Config newConfig = config;
+        Config newConfig = new()
+        {
+            ConfigPath = config.ConfigPath,
+            DataBasePath = config.DataBasePath,
+            TempPath = config.TempPath
+        };
 
         switch (type)
         {

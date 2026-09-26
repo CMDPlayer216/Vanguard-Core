@@ -62,6 +62,11 @@ public static class SearchCommand
                     continue;
                 }
                 // Primero comprobamos números
+                if (filters.Type.HasValue && filters.Type == user.Type)
+                {
+                    matches.Add(entry);
+                    break;
+                }
                 if (filters.Age.HasValue && filters.Age == user.Age)
                 {
                     matches.Add(entry);
@@ -126,6 +131,35 @@ public static class SearchCommand
                 }
                 // Ahora listas
                 bool match = false;
+                if (filters.Pronoun != null)
+                {
+                    // Exacta
+                    foreach (string pronoun in user.Pronouns)
+                    {
+                        if (pronoun.Equals(filters.Pronoun, StringComparison.OrdinalIgnoreCase))
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                    // Parcial
+                    if (!match)
+                    {
+                        foreach (string pronoun in user.Pronouns)
+                        {
+                            if (pronoun.Contains(filters.Pronoun, StringComparison.OrdinalIgnoreCase))
+                            {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (match)
+                    {
+                        matches.Add(entry);
+                        continue;
+                    }
+                }
                 if (filters.Rol != null && user.Roles != null)
                 {
                     // Exacta

@@ -7,7 +7,7 @@ public static class Export
     public static ExportResult User(string Id, string destPath, Config gConfig)
     {
         if (!destPath.EndsWith(".vud", StringComparison.OrdinalIgnoreCase))
-            destPath += ".vdb";
+            destPath += ".vud";
         List<IndexEntry>? Index = Query.Index(gConfig);
         if (Index == null || Index.Count == 0) return ExportResult.ThereIsNotUsersException;
         int entryIndex = Index.FindIndex((i) => i.Id == Id);

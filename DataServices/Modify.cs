@@ -10,7 +10,7 @@ public static class Modify
         if (!dbLock.Acquire())
         {
             DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-            
+
         }
         if (!ValidateModifications(changes)) return ModifyResult.InvalidModificationsException;
         List<IndexEntry>? Index = Query.Index(gConfig);
@@ -41,7 +41,9 @@ public static class Modify
         if (changes.AddPronouns != null) newPronouns.AddRange(changes.AddPronouns);
         user.Pronouns = newPronouns;
 
-        List<string>? newRoles = user.Roles;
+        List<string>? newRoles = null;
+        if (user.Roles != null) newRoles = [.. user.Roles];
+        else newRoles = null;
         if (changes.AddRoles != null || changes.RemoveRoles != null)
         {
             newRoles ??= [];
@@ -56,8 +58,9 @@ public static class Modify
             user.Roles = newRoles;
         }
 
-        List<string>? newWantedRoles = user.WantedRoles;
-
+        List<string>? newWantedRoles = null;
+        if (user.WantedRoles != null) newWantedRoles = [.. user.WantedRoles];
+        else newWantedRoles = null;
         if (changes.AddWantedRoles != null || changes.RemoveWantedRoles != null)
         {
             newWantedRoles ??= [];
@@ -80,8 +83,9 @@ public static class Modify
         }
         if (changes.LastStreakVerification != null) user.LastStreakVerification = changes.LastStreakVerification;
 
-        List<UserAction>? newPendActions = user.PendActions;
-
+        List<UserAction>? newPendActions = null;
+        if (user.PendActions != null) newPendActions = [.. user.PendActions];
+        else newPendActions = null;
         if (changes.AddPendActions != null || changes.RemovePendActions != null)
         {
             newPendActions ??= [];
@@ -89,7 +93,15 @@ public static class Modify
             {
                 foreach (UserAction action in user.PendActions)
                 {
-                    if (changes.RemovePendActions.Contains(action)) newPendActions.Remove(action);
+                    foreach (UserAction actionToRemove in changes.RemovePendActions)
+                    {
+                        if (actionToRemove.ActionTimeTrigger == action.ActionTimeTrigger
+                        && actionToRemove.ActionType == action.ActionType
+                        && actionToRemove.Reason == action.Reason)
+                        {
+                            newPendActions.Remove(action);
+                        }
+                    }
                 }
             }
             if (changes.AddPendActions != null) newPendActions.AddRange(changes.AddPendActions);
