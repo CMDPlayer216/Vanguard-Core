@@ -25,4 +25,5 @@ public class SearchFilters
     public string? Fandom { get; set; }
     public bool FastSearch { get; set; }
     public bool RawOutput { get; set; }
+    public UserStatus? Status { get; set; }
 }

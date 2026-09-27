@@ -14,6 +14,7 @@ public static class AddCommand
         var ageArgument = new Argument<int>("age") { Arity = ArgumentArity.ExactlyOne };
         var pronounsArgument = new Argument<string>("pronouns") { Arity = ArgumentArity.ExactlyOne };
         var fandomsArgument = new Argument<string>("fandoms") { Arity = ArgumentArity.ExactlyOne };
+        var statusArgument = new Argument<UserStatus>("status") { DefaultValueFactory = _ => UserStatus.Active };
         var additionalRolesArgument = new Option<string>("-r", "--additional-roles");
         var wantedRolesArgument = new Option<string>("-w", "--wanted-roles");
         var typeArgument = new Option<UserType>("-t", "--type");
@@ -33,6 +34,7 @@ public static class AddCommand
         command.Add(ageArgument);
         command.Add(pronounsArgument);
         command.Add(fandomsArgument);
+        command.Add(statusArgument);
         command.Add(wantedRolesArgument);
         command.Add(additionalRolesArgument);
         command.Add(typeArgument);
@@ -48,7 +50,8 @@ public static class AddCommand
             string? wantedRoles = parseResult.GetValue(wantedRolesArgument);
             UserType type = parseResult.GetValue(typeArgument);
             string? imagePath = parseResult.GetValue(imageArgument);
-            Commands.AddCommand.Run(primaryRole, roles, wantedRoles, pronouns, age, type, imagePath, fandoms, gConfig);
+            UserStatus status = parseResult.GetValue(statusArgument);
+            Commands.AddCommand.Run(primaryRole, roles, wantedRoles, pronouns, age, type, imagePath, fandoms, status, gConfig);
         });
 
         return command;

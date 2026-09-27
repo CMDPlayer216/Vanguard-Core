@@ -100,6 +100,13 @@ public static class ModifyCommand
             Description = "Ruta de la nueva imagen de avatar"
         };
 
+        var statusOption = new Option<UserStatus?>(
+            "--status")
+        {
+            Description = "Nuevo estado del usuario"
+        };
+
+
         command.Add(idOption);
         command.Add(primaryRoleOption);
         command.Add(addRoleOption);
@@ -115,6 +122,7 @@ public static class ModifyCommand
         command.Add(removeActionOption);
         command.Add(streakOption);
         command.Add(avatarOption);
+        command.Add(statusOption);
 
         command.SetAction(p =>
         {
@@ -162,6 +170,8 @@ public static class ModifyCommand
             string? avatarPath =
                 p.GetValue(avatarOption);
 
+            UserStatus? status = p.GetValue(statusOption);
+
             ModifyingUser changes = new()
             {
                 Id = id,
@@ -186,7 +196,8 @@ public static class ModifyCommand
 
                 Streak = streak,
 
-                AvatarImage = LoadAvatar(avatarPath)
+                AvatarImage = LoadAvatar(avatarPath),
+                Status = status
             };
 
             Commands.ModifyCommand.Run(changes, gConfig);

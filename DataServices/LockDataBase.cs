@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace VanguardCore.DataServices;
@@ -7,90 +6,52 @@ namespace VanguardCore.DataServices;
 public class DatabaseLock : IDisposable
 {
     private readonly string _lockFilePath;
-    private bool _isLocked = false;
+    private FileStream? _lockStream;
 
     public DatabaseLock(string dbDirectory)
     {
         _lockFilePath = Path.Combine(dbDirectory, "vanguarddb.lock");
-
-        // Suscribirse a las interrupciones del sistema
-        Console.CancelKeyPress += OnCancelKeyPress;
-        AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
     }
 
     public bool Acquire()
     {
         try
         {
-            // Intentar crear el archivo de forma atómica
-            using (FileStream fs = File.Open(_lockFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-            using (StreamWriter writer = new(fs))
-            {
-                writer.Write(Environment.ProcessId.ToString());
-            }
+            // Mantenemos el FileStream ABIERTO con FileShare.None.
+            // Mientras _lockStream esté abierto, el sistema operativo le prohibirá 
+            // a CUALQUIER otro proceso/hilo abrir, escribir o modificar este archivo.
+            _lockStream = new FileStream(
+                _lockFilePath, 
+                FileMode.OpenOrCreate, 
+                FileAccess.ReadWrite, 
+                FileShare.None, 
+                4096, 
+                FileOptions.DeleteOnClose); // Se auto-elimina al cerrar el proceso/stream
 
-            _isLocked = true;
             return true;
         }
         catch (IOException)
         {
-            // El archivo YA EXISTE.
-            // Si está huérfano, se elimina y se reintenta adquirir.
-            if (IsStaleLock())
-            {
-                DeleteLockFile();
-                return Acquire(); // Reintentar adquisición
-            }
-
-            // Está bloqueado por otro proceso activo
+            // El SO impidió abrir el archivo porque OTRO proceso tiene el FileStream activo.
             return false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Error] No se pudo crear el archivo lock: {ex.Message}");
+            Console.WriteLine($"[Error] No se pudo adquirir el lock: {ex.Message}");
             return false;
         }
     }
 
     public void Release()
     {
-        if (_isLocked)
+        if (_lockStream != null)
         {
-            DeleteLockFile();
-            _isLocked = false;
-        }
-    }
-
-    private bool IsStaleLock()
-    {
-        try
-        {
-            if (File.Exists(_lockFilePath))
-            {
-                string content = File.ReadAllText(_lockFilePath).Trim();
-                if (int.TryParse(content, out int pid))
-                {
-                    // Si el proceso guardado NO está corriendo, el lock es huérfano
-                    Process.GetProcessById(pid);
-                    return false; // El proceso sigue vivo
-                }
-            }
-        }
-        catch (ArgumentException)
-        {
-            // GetProcessById lanza ArgumentException si el PID ya no existe
-            return true; // Lock huérfano
-        }
-        catch
-        {
-            // Ante cualquier error de lectura/acceso, se asume que no se puede considerar huérfano
+            _lockStream.Close();
+            _lockStream.Dispose();
+            _lockStream = null;
         }
 
-        return false;
-    }
-
-    private void DeleteLockFile()
-    {
+        // Por seguridad, aseguramos borrado si DeleteOnClose falló por el SO
         try
         {
             if (File.Exists(_lockFilePath))
@@ -101,20 +62,8 @@ public class DatabaseLock : IDisposable
         catch { }
     }
 
-    private void OnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
-    {
-        Release();
-    }
-
-    private void OnProcessExit(object? sender, EventArgs e)
-    {
-        Release();
-    }
-
     public void Dispose()
     {
         Release();
-        Console.CancelKeyPress -= OnCancelKeyPress;
-        AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
     }
 }

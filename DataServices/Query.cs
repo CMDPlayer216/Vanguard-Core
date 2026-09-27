@@ -24,7 +24,14 @@ public static class Query
     {
         if (!File.Exists(userPath)) return null;
         byte[] rawUser = File.ReadAllBytes(userPath);
-        return MessagePackSerializer.Deserialize<User>(rawUser);
+        User? user = null;
+        try
+        {
+            MessagePackSerializer.Deserialize<User>(rawUser);
+        }
+        catch { }
+
+        return user;
     }
     public static User? LoadUserByFileName(string FileName, Config gConfig)
     {

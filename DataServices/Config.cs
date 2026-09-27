@@ -13,7 +13,16 @@ public static class Conf
         .WithNamingConvention(UnderscoredNamingConvention.Instance)
         .Build();
         string? yaml = serializer.Serialize(config);
-        File.WriteAllText(Path.Combine(configDir, configFileName), yaml);
+        try
+        {
+            Directory.CreateDirectory(configDir);
+            File.WriteAllText(Path.Combine(configDir, configFileName), yaml);
+        }
+        catch (Exception ex)
+        {
+            DrawError($"Error estableciendo configuración: {ex.Message}");
+        }
+
     }
     public static Config GetConfig()
     {

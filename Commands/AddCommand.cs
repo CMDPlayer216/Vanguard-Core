@@ -12,6 +12,7 @@ public static class AddCommand
                            UserType type,
                            string? imagePath,
                            string? fandoms,
+                           UserStatus status,
                            Config gConfig)
     {
         if (primaryRole == null || pronouns == null || fandoms == null)
@@ -51,6 +52,7 @@ public static class AddCommand
             Pronouns = [.. pronouns.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)],
             Age = age,
             Fandoms = [.. fandoms.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)],
+            Status = status,
             AvatarImage = image
         };
         WriteResult result = Write.AddUser(user, gConfig);

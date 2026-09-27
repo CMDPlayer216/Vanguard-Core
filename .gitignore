@@ -8,3 +8,4 @@ bin/*
 .vscode/*
 *.zip
 Auto-test/*.json
+./vanguardb

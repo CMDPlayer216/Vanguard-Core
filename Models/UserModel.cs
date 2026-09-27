@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization; // Directiva agregada
 using MessagePack;
 using NanoidDotNet;
-using System.Text.Json.Serialization; // Directiva agregada
 
 namespace VanguardCore.Models;
 
@@ -72,6 +72,9 @@ public class User
     [Key(13)]
     [JsonPropertyName("fandoms")]
     required public List<string> Fandoms { get; set; }
+    [Key(14)]
+    [JsonPropertyName("status")]
+    required public UserStatus Status { get; set; }
 }
 
 public enum UserType

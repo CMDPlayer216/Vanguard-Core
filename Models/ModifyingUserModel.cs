@@ -17,4 +17,5 @@ public class ModifyingUser
     public List<UserAction>? RemovePendActions { get; set; }
     public int? Streak { get; set; }
     public byte[]? AvatarImage { get; set; }
+    public UserStatus? Status { get; set; }
 }

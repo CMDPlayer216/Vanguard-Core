@@ -30,6 +30,8 @@ public static class Modify
         User? user = Query.LoadUserByFileName(oldEntry.Path, gConfig);
         if (user == null) return ModifyResult.CorruptUserException;
 
+        if (changes.Status != null) user.Status = changes.Status.Value;
+
         List<string> newPronouns = [.. user.Pronouns];
         if (changes.RemovePronouns != null)
         {
@@ -145,7 +147,7 @@ public static class Modify
             return ModifyResult.DefaultException;
         }
 
-        WriteResult result = Write.OverWriteIndex(gConfig, Index);
+        WriteResult result = Write.OverWriteIndex(gConfig, Index, isLockAcquired: true);
 
         return result switch
         {

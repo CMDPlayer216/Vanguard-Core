@@ -41,6 +41,14 @@ public static class ConsultCommand
             DrawText($"Edad: {user.Age}");
             DrawText($"Fecha de registro: {user.CreationTime}");
             DrawText($"Tipo de usuario: {user.Type}");
+            DrawText("Estado: ", newLine: false);
+            switch (user.Status)
+            {
+                case UserStatus.Active: DrawText("Activo", Color.Red); break;
+                case UserStatus.Inactive: DrawText("Inactivo", Color.Gray); break;
+                case UserStatus.Banned: DrawText("Baneado", Color.Red); break;
+                case UserStatus.Kicked: DrawText("Expulsado", Color.Yellow); break;
+            }
             DrawText("Pronombres:");
             foreach (string pronoun in user.Pronouns)
             {

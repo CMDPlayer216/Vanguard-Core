@@ -16,7 +16,7 @@ public static class SearchCommand
             filters.MaxStreak == null && filters.Fandom == null &&
             filters.Age == null && filters.CreationTime == null &&
             filters.Streak == null && filters.MinLastStreakVerification == null &&
-            filters.MaxLastStreakVerification == null;
+            filters.MaxLastStreakVerification == null && filters.Status == null;
 
         List<IndexEntry> matches = [];
         List<IndexEntry>? Index = Query.Index(gConfig);
@@ -65,7 +65,7 @@ public static class SearchCommand
                 if (filters.Type.HasValue && filters.Type == user.Type)
                 {
                     matches.Add(entry);
-                    break;
+                    continue;
                 }
                 if (filters.Age.HasValue && filters.Age == user.Age)
                 {
@@ -83,6 +83,11 @@ public static class SearchCommand
                     continue;
                 }
                 if (IsInRangeMatch(filters.MinStreak, filters.MaxStreak, user.Streak))
+                {
+                    matches.Add(entry);
+                    continue;
+                }
+                if (filters.Status != null && user.Status == filters.Status)
                 {
                     matches.Add(entry);
                     continue;
