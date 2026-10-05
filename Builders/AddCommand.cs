@@ -10,7 +10,7 @@ public static class AddCommand
         
         var command = new Command("add", "Añadir un usuario a la base de datos");
 
-        var primaryRoleArgument = new Argument<string>("primary-role") { Arity = ArgumentArity.ExactlyOne };
+        var primaryRoleArgument = new Argument<string>("primary-rol") { Arity = ArgumentArity.ExactlyOne };
         var ageArgument = new Argument<int>("age") { Arity = ArgumentArity.ExactlyOne };
         var pronounsArgument = new Argument<string>("pronouns") { Arity = ArgumentArity.ExactlyOne };
         var fandomsArgument = new Argument<string>("fandoms") { Arity = ArgumentArity.ExactlyOne };

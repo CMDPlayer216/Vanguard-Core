@@ -22,7 +22,7 @@ public static class ConsultCommandBuilder
             string? id = p.GetValue(idArgument);
             if (id == null)
             {
-                DrawText("ID inválido.");
+                DrawError("ID inválido.");
                 return;
             }
             Commands.ConsultCommand.Run(id, p.GetValue(rawOption), gConfig);

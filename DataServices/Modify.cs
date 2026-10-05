@@ -9,8 +9,7 @@ public static class Modify
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
         if (!dbLock.Acquire())
         {
-            DrawText("ERROR: la base de datos está bloqueada.", Color.Red);
-
+            DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
         }
         if (!ValidateModifications(changes)) return ModifyResult.InvalidModificationsException;
         List<IndexEntry>? Index = Query.Index(gConfig);

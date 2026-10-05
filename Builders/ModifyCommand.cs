@@ -221,23 +221,23 @@ public static class ModifyCommand
                 StringSplitOptions.None);
 
             if (parts.Length != 3)
-                throw new ArgumentException($"Formato de acción inválido: {action}");
+                DrawError($"Formato de acción inválido: {action}", Color.Red);
 
             if (!Enum.TryParse<Models.Action>(
                     parts[0],
                     true,
                     out Models.Action actionType))
             {
-                throw new ArgumentException(
-                    $"Tipo de acción inválido: {parts[0]}");
+                DrawError(
+                    $"Tipo de acción inválido: {parts[0]}", Color.Red);
             }
 
             if (!DateTime.TryParse(
                     parts[1],
                     out DateTime actionTime))
             {
-                throw new ArgumentException(
-                    $"Fecha de acción inválida: {parts[1]}");
+                DrawError(
+                    $"Fecha de acción inválida: {parts[1]}", Color.Red);
             }
 
             result.Add(new UserAction
@@ -256,6 +256,7 @@ public static class ModifyCommand
         if (path == null)
             return null;
 
-        return File.ReadAllBytes(path);
+        if (File.Exists(path)) return File.ReadAllBytes(path);
+        return null;
     }
 }

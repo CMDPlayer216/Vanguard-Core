@@ -20,7 +20,7 @@ public static class ConsoleHelper
         
         Console.ResetColor();
     }
-    public static void DrawError(string text, Color color = Color.White, bool newLine = true)
+    public static void DrawError(string text, Color color = Color.White, bool newLine = true, bool stopExecution = true, bool validateDataBase = false, Config? gConfig = null)
     {
         Console.ForegroundColor = color switch
         {
@@ -37,7 +37,8 @@ public static class ConsoleHelper
         if (newLine) Console.Error.Write(Environment.NewLine);
 
         Console.ResetColor();
-        Environment.Exit(1);
+        if (validateDataBase && gConfig is not null) Validators.FileSystemValidators.AllFileSystem(gConfig);
+        if (stopExecution) Environment.Exit(1);
     }
     public static string? TakeInput(string prefix = " > ", Color prefixColor = Color.Green, Color textColor = Color.White)
     {

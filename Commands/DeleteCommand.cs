@@ -19,8 +19,8 @@ public static class DeleteCommand
                 }
             case DeleteResult.DirectoryNotFoundException:
                 {
-                    DrawError("El directorio de la base de datos no existe, regenerando...");
                     Validators.FileSystemValidators.AllFileSystem(gConfig);
+                    DrawError("El directorio de la base de datos no existe, regenerando...");
                     break;
                 }
             case DeleteResult.UnauthorizedAccessException:

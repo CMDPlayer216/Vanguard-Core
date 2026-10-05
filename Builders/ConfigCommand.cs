@@ -31,6 +31,8 @@ public static class ConfigCommand
 
             if (newValue == null) return;
 
+            if (type == ConfigSetType.configPath) DrawError("No puedes cambiar la carpeta de configuración.");
+
             Commands.ConfigCommand.SetConfig(type, newValue, gConfig);
         });
 

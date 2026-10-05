@@ -19,4 +19,4 @@ if ($userPath -notlike "*$installDir*") {
     Write-Host "Se agregó UserDB al PATH del sistema." -ForegroundColor Green
 }
 
-Write-Host "¡Instalación completada! Abre una nueva terminal y escribe 'VanguardCore'." -ForegroundColor Green
+Write-Host "¡Instalación completada! Abre una nueva terminal y escribe 'vanguardb'." -ForegroundColor Green

@@ -15,15 +15,15 @@ public static class ModifyCommand
         {
             case ModifyResult.InvalidModificationsException:
                 {
-                    DrawError("Los datos introducidos son inválidos.", Color.Red);
-                    DrawError("");
-                    DrawError("  --> Caracteres válidos para IDs: ", newLine: false);
-                    DrawError(Validators.UserValidators.IdValidChars, Color.Green);
-                    DrawError("  --> Caracteres válidos para otros textos: ", newLine: false);
-                    DrawError(Validators.UserValidators.OtherValidChars, Color.Green);
-                    DrawError($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}");
-                    DrawError($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}");
-                    DrawError($"  --> Formato de fecha: yyyy-MM-dd");
+                    DrawError("Los datos introducidos son inválidos.", Color.Red, stopExecution: false);
+                    DrawError("", stopExecution: false);
+                    DrawError("  --> Caracteres válidos para IDs: ", newLine: false, stopExecution: false);
+                    DrawError(Validators.UserValidators.IdValidChars, Color.Green, stopExecution: false);
+                    DrawError("  --> Caracteres válidos para otros textos: ", newLine: false, stopExecution: false);
+                    DrawError(Validators.UserValidators.OtherValidChars, Color.Green, stopExecution: false);
+                    DrawError($"  --> Edad mínima válida: {Validators.UserValidators.MinValidAge}", stopExecution: false);
+                    DrawError($"  --> Racha mínima válida: {Validators.UserValidators.MinValidStreak}", stopExecution: false);
+                    DrawError("  --> Formato de fecha: yyyy-MM-dd", stopExecution: false);
                     return;
                 }
             case ModifyResult.UserDoNotExistException:
@@ -38,8 +38,8 @@ public static class ModifyCommand
                 }
             case ModifyResult.DirectoryNotFoundException:
                 {
-                    DrawError("Directorio de base de datos no existe, reconstruyendo...");
                     Validators.FileSystemValidators.AllFileSystem(gConfig);
+                    DrawError("Directorio de base de datos no existe, reconstruyendo...");
                     return;
                 }
             case ModifyResult.UnauthorizedAccessException:

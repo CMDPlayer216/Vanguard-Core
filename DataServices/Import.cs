@@ -534,6 +534,10 @@ public static class Import
         }
         catch (DirectoryNotFoundException) { return ImportResult.DirectoryNotFoundException; }
         catch (UnauthorizedAccessException) { return ImportResult.UnauthorizedAccessException; }
+        catch (FileNotFoundException)
+        {
+            File.Copy(tempIndexPath, indexPath, overwrite: true);
+        }
         catch (IOException) { return ImportResult.IOException; }
         catch { return ImportResult.DefaultException; }
 

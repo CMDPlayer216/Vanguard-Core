@@ -67,4 +67,4 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
     fi
 fi
 
-echo -e "\n${GREEN}¡Listo! Escribe 'vangardb' en la terminal.${NC}\n"
+echo -e "\n${GREEN}¡Listo! Escribe 'vanguardb' en la terminal.${NC}\n"

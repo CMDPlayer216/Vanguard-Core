@@ -6,8 +6,16 @@ public static class DataCommand
 {
     public static class Import
     {
-        public static void User(Config gConfig, string path, ConflictMode mode)
+        public static void User(Config gConfig, string path, ConflictMode mode, bool isLockAcquired = false)
         {
+            using var dbLock = new DatabaseLock(gConfig.ConfigPath);
+            if (!isLockAcquired)
+            {
+                if (!dbLock.Acquire())
+                {
+                    DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+                }
+            }
             path = ExpandPath(path);
             User? user = Query.LoadUserByPath(path);
             if (user == null)

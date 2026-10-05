@@ -6,6 +6,7 @@ public static class Export
 {
     public static ExportResult User(string Id, string destPath, Config gConfig)
     {
+        if (destPath.EndsWith("/")) destPath += $"user_{DateTime.Now}";
         if (!destPath.EndsWith(".vud", StringComparison.OrdinalIgnoreCase))
             destPath += ".vud";
         List<IndexEntry>? Index = Query.Index(gConfig);
@@ -16,7 +17,7 @@ public static class Export
         if (!File.Exists(path)) return ExportResult.SourceUnaccesibleException;
         try
         {
-            File.Copy(path, destPath);
+            File.Copy(path, destPath, overwrite: true);
         }
         catch (UnauthorizedAccessException)
         {

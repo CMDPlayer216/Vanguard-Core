@@ -28,6 +28,9 @@ public static class SearchCommand
         var typeOption = new Option<UserType?>("-t", "--type") { Description = "Tipo de usuario" };
         var fandomOption = new Option<string>("-F", "--fandom") { Description = "Fandom asignado" };
         var rawOption = new Option<bool>("--raw") { Description = "Imprime la salida en JSON" };
+        var streakOption = new Option<int?>("-s") { Description = "Racha" };
+        var minStreakOption = new Option<int?>("--min-streak") { Description = "Racha mínima" };
+        var maxStreakOption = new Option<int?>("--maxśtreak") { Description = "Racha máxima" };
 
         ageOption.DefaultValueFactory = null;
         minAgeOption.DefaultValueFactory = null;
@@ -79,6 +82,9 @@ public static class SearchCommand
             UserType? type = p.GetValue(typeOption);
             string? fandom = p.GetValue(fandomOption);
             bool raw = p.GetValue(rawOption);
+            int? streak = p.GetValue(streakOption);
+            int? minStreak = p.GetValue(minStreakOption);
+            int? maxStreak = p.GetValue(maxStreakOption);
 
             SearchFilters filters = new()
             {
@@ -99,7 +105,10 @@ public static class SearchCommand
                 MaxLastStreakVerification = maxLastStreak,
                 Type = type,
                 Fandom = fandom,
-                RawOutput = raw
+                RawOutput = raw,
+                Streak = streak,
+                MinStreak = minStreak,
+                MaxStreak = maxStreak
             };
             
             Commands.SearchCommand.Run(filters, gConfig);

@@ -2,8 +2,8 @@ namespace VanguardCore.Validators;
 
 public static class UserValidators
 {
-    public const string IdValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_1234567890";
-    public const string OtherValidChars = $"{IdValidChars}üÜáéíóúÁÉÍÓÚçÇ. ";
+    public const string IdValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_1234567890ñÑ";
+    public const string OtherValidChars = $"{IdValidChars}üÜáéíóúÁÉÍÓÚçÇ. ñÑ/,";
     public const int MinValidAge = 0;
     public const int MinValidStreak = 0;
     public const int MinValidVersion = 1;

@@ -239,7 +239,7 @@ temp_path: /tmp/
 | - Vanguard-Core.csproj # Opciones de .NET SDK
 | - export.sh            # Script rápido para exportar ejecutables autocontenidos
 | - install.sh           # Script de instalación para Linux
-| - inspall.ps1          # Script de instalación para Windows
+| - install.ps1          # Script de instalación para Windows
 | - LICENSE              # Licencia MIT
 | - README.md            # Este documento
 | - .gitignore           # Lista de archivos que git ignora
@@ -248,7 +248,7 @@ temp_path: /tmp/
 | - Builders/            # Constructores de subcomandos
 |   | - AddCommand.cs            # Comando add
 |   | - ConfigCommand.cs         # Comando config
-|   | - ConsultCommandBuilder.cs # Comando consullt
+|   | - ConsultCommandBuilder.cs # Comando consut
 |   | - DeleteCommandBuilder.cs  # Comando delete
 |   | - ExportCommand.cs         # Comando de exportación
 |   | - ImportCommand.cs         # Comando de importación
@@ -257,7 +257,7 @@ temp_path: /tmp/
 | - Commands/            # Lógica de comandos
 |   | - AddCommand.cs            # Comando add
 |   | - ConfigCommand.cs         # Comando config
-|   | - ConsultCommand.cs        # Comando consullt
+|   | - ConsultCommand.cs        # Comando consult
 |   | - DeleteCommand.cs         # Comando delete
 |   | - DataCommand.cs           # Comandos de importación y exportación
 |   | - ModifyCommand.cs         # Comando modify

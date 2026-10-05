@@ -27,7 +27,7 @@ public static class Query
         User? user = null;
         try
         {
-            MessagePackSerializer.Deserialize<User>(rawUser);
+            user = MessagePackSerializer.Deserialize<User>(rawUser);
         }
         catch { }
 

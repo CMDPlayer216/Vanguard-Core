@@ -44,7 +44,7 @@ public static class ConsultCommand
             DrawText("Estado: ", newLine: false);
             switch (user.Status)
             {
-                case UserStatus.Active: DrawText("Activo", Color.Red); break;
+                case UserStatus.Active: DrawText("Activo", Color.Green); break;
                 case UserStatus.Inactive: DrawText("Inactivo", Color.Gray); break;
                 case UserStatus.Banned: DrawText("Baneado", Color.Red); break;
                 case UserStatus.Kicked: DrawText("Expulsado", Color.Yellow); break;

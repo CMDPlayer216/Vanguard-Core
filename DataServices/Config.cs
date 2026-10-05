@@ -8,7 +8,9 @@ public static class Conf
     {
         string configDir = config.ConfigPath;
         const string configFileName = "config.yaml";
-        config = newConfig;
+        config.ConfigPath = newConfig.ConfigPath;
+        config.DataBasePath = newConfig.DataBasePath;
+        config.TempPath = newConfig.TempPath;
         var serializer = new SerializerBuilder()
         .WithNamingConvention(UnderscoredNamingConvention.Instance)
         .Build();
@@ -36,6 +38,6 @@ public static class Conf
             .IgnoreUnmatchedProperties() // Evita fallos si el usuario pone propiedades extra
             .Build();
 
-        return deserializer.Deserialize<Config>(rawConfig);
+        return deserializer.Deserialize<Config>(rawConfig) ?? config;
     }
 }

@@ -22,7 +22,7 @@ public static class DeleteCommandBuilder
             string? id = p.GetValue(idArgument);
             if (id == null)
             {
-                DrawText("ID inválido.");
+                DrawError("ID inválido.");
                 return;
             }
             Commands.DeleteCommand.Run(id, p.GetValue(noConfirmOption), gConfig);
