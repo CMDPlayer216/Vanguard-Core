@@ -1,4 +1,4 @@
-# Vanguard Core 0.2.4 RELEASE CANDIDATE 3
+# Vanguard Core 0.2.5 RELEASE CANDIDATE 4
 Interfaz de línea de comandos (CLI) con el objetivo de administrar usuarios en comunidades de roleplay (Teams de Whatsapp, servidores de Discord, etc).
 
 ---
@@ -71,6 +71,9 @@ Opciones:
 - `-F`|`--fandom`: Fandom asignado
 - `-?`|`-h`|`--help`: Mostrar ayuda e información de uso
 - `--raw`: Ofrece salida en formato JSON para integración con CLI o scripts
+- `-s`|`--streak`: Racha del usuario
+- `--max-streak`: Racha máxima del usuario
+- `--minstreak`: Racha mínima del usuario
 
 Ejemplo de uso:
 ```bash
