@@ -1,6 +1,6 @@
 # 1. Definir la ruta de instalación local (ej. C:\Users\Nombre\AppData\Local\UserDB)
 $installDir = "$env:LOCALAPPDATA\VanguardCore"
-$exePath = "$installDir\VanguardCore.exe"
+$exePath = "$installDir\vanguardb.exe"
 
 # 2. Crear el directorio si no existe
 if (-not (Test-Path $installDir)) {
@@ -8,7 +8,7 @@ if (-not (Test-Path $installDir)) {
 }
 
 # 3. Descargar el ejecutable desde la Release de GitHub
-$downloadUrl = "https://github.com/CMDPlayer216/Vanguard-Core/latest/download/vanguard-core-win-x64.exe"
+$downloadUrl = "https://github.com/CMDPlayer216/Vanguard-Core/releases/latest/download/vanguard-core-win-x64.exe"
 Write-Host "Descargando Vanguard-Core..." -ForegroundColor Cyan
 Invoke-WebRequest -Uri $downloadUrl -OutFile $exePath
 

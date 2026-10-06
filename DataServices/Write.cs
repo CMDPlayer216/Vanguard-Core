@@ -18,7 +18,7 @@ public static class Write
         }
         bool isValidUser = ValidateUser(user);
         if (!isValidUser) return WriteResult.InvalidUserException;
-        IndexEntry newEntry = new() { PrimaryRole = user.PrimaryRole, Id = user.Id, AvatarImage = user.AvatarImage, Version = user.Version };
+        IndexEntry newEntry = new() { PrimaryRole = user.PrimaryRole, Id = user.Id, Version = user.Version };
         byte[] serializedUser = MessagePackSerializer.Serialize(user);
         string userPath = Path.Combine(gConfig.DataBasePath, newEntry.Path);
         try

@@ -23,7 +23,7 @@ public static class DataCommand
                 DrawError("El usuario está corrupto.", Color.Red);
                 return;
             }
-            ImportResult result = DataServices.Import.User(user, gConfig, mode);
+            ImportResult result = DataServices.Import.User(user, gConfig, mode, true);
 
             switch (result)
             {
@@ -82,6 +82,11 @@ public static class DataCommand
         }
         public static void DataBase(Config gConfig, string path, ConflictMode mode)
         {
+            using var dbLock = new DatabaseLock(gConfig.ConfigPath);
+            if (!dbLock.Acquire())
+            {
+                DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
+            }
             path = ExpandPath(path);
             List<User>? users = Pack.UnpackDataBase(path);
             if (users == null || users.Count == 0)
@@ -191,6 +196,11 @@ public static class DataCommand
         }
         public static void DataBase(string destPath, Config gConfig)
         {
+            using var dbLock = new DatabaseLock(gConfig.ConfigPath);
+            if (!dbLock.Acquire())
+            {
+                DrawError("Error, la base de datos está bloqueada.");
+            }
             destPath = ExpandPath(destPath);
 
             ExportResult result = DataServices.Export.DataBase(destPath, gConfig);

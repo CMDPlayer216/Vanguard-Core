@@ -11,3 +11,5 @@ Auto-test/*.json
 ./vanguardb
 Informe-Obsidian/*
 Informe-Obsidian/
+dist/
+dist/*

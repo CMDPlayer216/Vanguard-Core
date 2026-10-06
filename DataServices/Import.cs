@@ -54,7 +54,6 @@ public static class Import
                     PrimaryRole = user.PrimaryRole,
                     Id = user.Id,
                     Version = user.Version,
-                    AvatarImage = user.AvatarImage
                 };
 
                 string userPath = Path.Combine(
@@ -116,7 +115,6 @@ public static class Import
                         PrimaryRole = user.PrimaryRole,
                         Id = user.Id,
                         Version = user.Version,
-                        AvatarImage = user.AvatarImage,
                         Path = existingEntry.Path
                     };
                     break;
@@ -129,8 +127,6 @@ public static class Import
                         Version = Math.Max(
                             existingEntry.Version,
                             user.Version) + 1,
-                        AvatarImage =
-                            user.AvatarImage ?? existingEntry.AvatarImage,
                         Path = existingEntry.Path
                     };
 
@@ -146,7 +142,7 @@ public static class Import
                     userToSerialize.Age = user.Age;
 
                     userToSerialize.AvatarImage =
-                        user.AvatarImage ?? existingEntry.AvatarImage;
+                        user.AvatarImage;
 
                     userToSerialize.Fandoms =
                         [.. userToSerialize.Fandoms.Union(user.Fandoms)];
@@ -179,7 +175,7 @@ public static class Import
 
                     userToSerialize.Streak = user.Streak;
                     userToSerialize.Type = user.Type;
-
+                    userToSerialize.Status = user.Status;
                     userToSerialize.Version =
                         Math.Max(
                             existingEntry.Version,
@@ -204,9 +200,6 @@ public static class Import
                         Version = Math.Max(
                             existingEntry.Version,
                             user.Version) + 1,
-                        AvatarImage =
-                            existingEntry.AvatarImage ??
-                            user.AvatarImage,
                         Path = existingEntry.Path
                     };
 
@@ -371,10 +364,10 @@ public static class Import
             CopiarDirectorioRecursivo(subDirectorio, subDirectorioDestino);
         }
     }
-    public static ImportResult User(User user, Config gConfig, ConflictMode mode)
+    public static ImportResult User(User user, Config gConfig, ConflictMode mode, bool isDbAdquiered = false)
     {
         using var dbLock = new DatabaseLock(gConfig.ConfigPath);
-        if (!dbLock.Acquire())
+        if (!isDbAdquiered && !dbLock.Acquire())
         {
             DrawError("ERROR: la base de datos está bloqueada.", Color.Red);
             return ImportResult.Failed; // Salir si el lock falla
@@ -416,7 +409,6 @@ public static class Import
                     PrimaryRole = user.PrimaryRole,
                     Id = user.Id,
                     Version = user.Version,
-                    AvatarImage = user.AvatarImage,
                     Path = existingEntry.Path
                 };
                 break;
@@ -427,7 +419,6 @@ public static class Import
                     PrimaryRole = user.PrimaryRole,
                     Id = existingEntry.Id,
                     Version = Math.Max(existingEntry.Version, user.Version) + 1,
-                    AvatarImage = user.AvatarImage ?? existingEntry.AvatarImage,
                     Path = existingEntry.Path
                 };
                 userToSerialize = Query.LoadUserById(user.Id, gConfig);
@@ -437,7 +428,7 @@ public static class Import
                     break;
                 }
                 userToSerialize.Age = user.Age;
-                userToSerialize.AvatarImage = user.AvatarImage ?? existingEntry.AvatarImage;
+                userToSerialize.AvatarImage = user.AvatarImage;
                 userToSerialize.Fandoms = [.. userToSerialize.Fandoms.Union(user.Fandoms)];
                 userToSerialize.LastStreakVerification = user.LastStreakVerification ?? userToSerialize.LastStreakVerification;
                 if (user.PendActions != null)
@@ -454,6 +445,7 @@ public static class Import
                 }
                 userToSerialize.Streak = user.Streak;
                 userToSerialize.Type = user.Type;
+                userToSerialize.Status = user.Status;
                 userToSerialize.Version = Math.Max(existingEntry.Version, user.Version) + 1;
                 if (user.WantedRoles != null)
                 {
@@ -468,7 +460,6 @@ public static class Import
                     PrimaryRole = existingEntry.PrimaryRole,
                     Id = existingEntry.Id,
                     Version = Math.Max(existingEntry.Version, user.Version) + 1,
-                    AvatarImage = existingEntry.AvatarImage ?? user.AvatarImage,
                     Path = existingEntry.Path
                 };
                 userToSerialize = Query.LoadUserById(user.Id, gConfig);

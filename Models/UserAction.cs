@@ -4,7 +4,7 @@ namespace VanguardCore.Models;
 
 #pragma warning disable RCS1102
 [MessagePackObject]
-public class UserAction
+public record class UserAction : IEquatable<UserAction>
 {
     [Key(0)]
     public DateTime ActionTimeTrigger { get; set; }

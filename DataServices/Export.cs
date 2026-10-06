@@ -7,8 +7,11 @@ public static class Export
     public static ExportResult User(string Id, string destPath, Config gConfig)
     {
         if (destPath.EndsWith("/")) destPath += $"user_{DateTime.Now}";
-        if (!destPath.EndsWith(".vud", StringComparison.OrdinalIgnoreCase))
-            destPath += ".vud";
+        if (destPath.EndsWith('/') || destPath.EndsWith('\\') || Directory.Exists(destPath))
+        {
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            destPath = Path.Combine(destPath, $"user_{timestamp}");
+        }
         List<IndexEntry>? Index = Query.Index(gConfig);
         if (Index == null || Index.Count == 0) return ExportResult.ThereIsNotUsersException;
         int entryIndex = Index.FindIndex((i) => i.Id == Id);

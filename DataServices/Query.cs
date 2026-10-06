@@ -38,7 +38,11 @@ public static class Query
         string userPath = Path.Combine(gConfig.DataBasePath, FileName);
         if (!File.Exists(userPath)) return null;
         byte[] rawUser = File.ReadAllBytes(userPath);
-        return MessagePackSerializer.Deserialize<User>(rawUser);
+        try
+        {
+            return MessagePackSerializer.Deserialize<User>(rawUser);
+        }
+        catch { return null; }
     }
     public static User? LoadUserById(string Id, Config gConfig)
     {

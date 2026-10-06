@@ -25,7 +25,13 @@ public static class Modify
             }
         }
         if (oldEntry == null) return ModifyResult.UserDoNotExistException;
-        newEntry = oldEntry;
+        newEntry = new()
+        {
+            Id = oldEntry.Id,
+            Path = oldEntry.Path,
+            PrimaryRole = changes.PrimaryRole ?? oldEntry.PrimaryRole,
+            Version = oldEntry.Version + 1
+        };
         User? user = Query.LoadUserByFileName(oldEntry.Path, gConfig);
         if (user == null) return ModifyResult.CorruptUserException;
 
@@ -80,7 +86,6 @@ public static class Modify
         if (changes.AvatarImage != null)
         {
             user.AvatarImage = changes.AvatarImage;
-            newEntry.AvatarImage = changes.AvatarImage;
         }
         if (changes.LastStreakVerification != null) user.LastStreakVerification = changes.LastStreakVerification;
 
@@ -116,6 +121,11 @@ public static class Modify
         }
         if (changes.Streak != null) user.Streak = changes.Streak.Value;
         if (changes.Type != null) user.Type = changes.Type.Value;
+
+        if (!ValidateUser(user))
+        {
+            return ModifyResult.InvalidUserException;
+        }
 
         newEntry.Version++;
         user.Version++;

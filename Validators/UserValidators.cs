@@ -3,7 +3,7 @@ namespace VanguardCore.Validators;
 public static class UserValidators
 {
     public const string IdValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_1234567890ñÑ";
-    public const string OtherValidChars = $"{IdValidChars}üÜáéíóúÁÉÍÓÚçÇ. ñÑ/,";
+    public const string OtherValidChars = $"{IdValidChars}üÜáéíóúÁÉÍÓÚçÇ.,/:;()!&'\"#+*?%@$ ";
     public const int MinValidAge = 0;
     public const int MinValidStreak = 0;
     public const int MinValidVersion = 1;
@@ -35,7 +35,7 @@ public static class UserValidators
     public static bool ValidateUnnecesaryStreak(int? streak)
     {
         if (streak == null) return true;
-        return streak >= MinValidAge;
+        return streak >= MinValidStreak;
     }
     public static bool ValidateString(string text)
     {

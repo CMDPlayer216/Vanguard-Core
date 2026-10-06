@@ -1,4 +1,4 @@
-# Vanguard Core 0.2.5 RELEASE CANDIDATE 4
+# Vanguard Core 0.2.6 RELEASE CANDIDATE 5
 Interfaz de línea de comandos (CLI) con el objetivo de administrar usuarios en comunidades de roleplay (Teams de Whatsapp, servidores de Discord, etc).
 
 ---
@@ -23,13 +23,14 @@ cd Vanguard-Core
 ## Características principales
 ### Adición de usuarios
 ```bash
-vanguardb <primary-role> <age> <pronouns> <fandoms> [opciones]
+vanguardb <primary-role> <age> <pronouns> <fandoms> <status> [opciones]
 ```
 Argumentos:
 - primary-role: Rol principal del usuario por el que se le reconoce.
 - age: Edad del usuario. Tiene que ser un número positivo.
 - pronouns: Pronombres del usuario, se separan usando `|`.
 - fandoms: Fandoms a los que pertenece el usuario, se separan usando `|`.
+- status: Estado del usuario (por defecto activo).
 
 Opciones:
 - `-w` | `--wanted-roles`: Roles buscados por el usuario que quieres agregar (separados por `|`).
@@ -94,10 +95,10 @@ Resultado:
 ```
 ### Modificar un usuario
 ```bash
-vanguardb modify [opciones]
+vanguardb modify <user-id> [opciones]
 ```
 Opciones:
-* `-u`|`--user-id`: ID del usuario a modificar
+* `<user-id>`: ID del usuario a modificar
 * `-p`|`--primary-rol`: Nuevo rol principal
 * `--add-rol`: Roles adicionales que se añadirán
 * `--remove-rol`: Roles adicionales que se eliminarán
@@ -116,7 +117,7 @@ Opciones:
 
 Ejemplo de uso:
 ```bash
-vanguardb modify -u ZZdLarGA93iR -p "Ritsu Kageyama" --remove-wanted-rol "Arataka Reigen"
+vanguardb modify ZZdLarGA93iR -p "Ritsu Kageyama" --remove-wanted-rol "Arataka Reigen"
 ```
 El programa preguntará si estas seguro de ejecutar esta operación (`s/N`).
 ### Consultar un usuario

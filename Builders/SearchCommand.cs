@@ -28,9 +28,11 @@ public static class SearchCommand
         var typeOption = new Option<UserType?>("-t", "--type") { Description = "Tipo de usuario" };
         var fandomOption = new Option<string>("-F", "--fandom") { Description = "Fandom asignado" };
         var rawOption = new Option<bool>("--raw") { Description = "Imprime la salida en JSON" };
-        var streakOption = new Option<int?>("-s") { Description = "Racha" };
+        var streakOption = new Option<int?>("-s", "--streak") { Description = "Racha" };
         var minStreakOption = new Option<int?>("--min-streak") { Description = "Racha mínima" };
-        var maxStreakOption = new Option<int?>("--maxśtreak") { Description = "Racha máxima" };
+        var maxStreakOption = new Option<int?>("--max-streak") { Description = "Racha máxima" };
+        var andSearchOption = new Option<bool>("--alternative") { Description = "Cambia el tipo de búsqueda de OR a AND" };
+
 
         ageOption.DefaultValueFactory = null;
         minAgeOption.DefaultValueFactory = null;
@@ -60,7 +62,10 @@ public static class SearchCommand
         command.Add(typeOption);
         command.Add(fandomOption);
         command.Add(rawOption);
-        command.Add(rawOption);
+        command.Add(streakOption);
+        command.Add(minStreakOption);
+        command.Add(maxStreakOption);
+        command.Add(andSearchOption);
 
         command.SetAction(p =>
         {
@@ -85,6 +90,7 @@ public static class SearchCommand
             int? streak = p.GetValue(streakOption);
             int? minStreak = p.GetValue(minStreakOption);
             int? maxStreak = p.GetValue(maxStreakOption);
+            bool andSearch = p.GetValue(andSearchOption);
 
             SearchFilters filters = new()
             {
@@ -111,7 +117,12 @@ public static class SearchCommand
                 MaxStreak = maxStreak
             };
             
-            Commands.SearchCommand.Run(filters, gConfig);
+            if (andSearch) {
+                Commands.SearchCommand.RunAnd(filters, gConfig);
+            }
+            else {
+                Commands.SearchCommand.Run(filters, gConfig);
+            }
         });
 
         return command;

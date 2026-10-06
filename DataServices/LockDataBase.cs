@@ -7,10 +7,11 @@ public class DatabaseLock : IDisposable
 {
     private readonly string _lockFilePath;
     private FileStream? _lockStream;
+    private bool _hasAcquiredLock = false;
 
-    public DatabaseLock(string dbDirectory)
+    public DatabaseLock(string configDirectory)
     {
-        _lockFilePath = Path.Combine(dbDirectory, "vanguarddb.lock");
+        _lockFilePath = Path.Combine(configDirectory, "vanguarddb.lock");
     }
 
     public bool Acquire()
@@ -21,12 +22,13 @@ public class DatabaseLock : IDisposable
             // Mientras _lockStream esté abierto, el sistema operativo le prohibirá 
             // a CUALQUIER otro proceso/hilo abrir, escribir o modificar este archivo.
             _lockStream = new FileStream(
-                _lockFilePath, 
-                FileMode.OpenOrCreate, 
-                FileAccess.ReadWrite, 
-                FileShare.None, 
-                4096, 
+                _lockFilePath,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                FileShare.None,
+                4096,
                 FileOptions.DeleteOnClose); // Se auto-elimina al cerrar el proceso/stream
+            _hasAcquiredLock = true;
 
             return true;
         }
@@ -54,9 +56,10 @@ public class DatabaseLock : IDisposable
         // Por seguridad, aseguramos borrado si DeleteOnClose falló por el SO
         try
         {
-            if (File.Exists(_lockFilePath))
+            if (_hasAcquiredLock && File.Exists(_lockFilePath))
             {
                 File.Delete(_lockFilePath);
+                _hasAcquiredLock = false;
             }
         }
         catch { }

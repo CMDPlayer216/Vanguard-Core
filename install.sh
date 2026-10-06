@@ -44,27 +44,22 @@ fi
 
 TARGET_PATH="$INSTALL_DIR/$BINARY_NAME"
 
-# 4. Descargar
 echo -e "${CYAN}Descargando ejecutable (${ASSET_NAME})...${NC}"
-curl -sSL -o "$TARGET_PATH" "$DOWNLOAD_URL"
-
-# 5. Dar permisos
+if ! curl -sSLf -o "$TARGET_PATH" "$DOWNLOAD_URL"; then
+    echo -e "${RED}Error: Falló la descarga desde $DOWNLOAD_URL. Verifica tu conexión o límites de GitHub API.${NC}"
+    exit 1
+fi
 chmod +x "$TARGET_PATH"
 echo -e "${GREEN}✓ Instalado en: $TARGET_PATH${NC}"
 
 # 6. Configurar PATH
-if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-    SHELL_CONFIG=""
-    [ -f "$HOME/.bashrc" ] && SHELL_CONFIG="$HOME/.bashrc"
-    [ -f "$HOME/.zshrc" ] && SHELL_CONFIG="$HOME/.zshrc"
-
-    if [ -n "$SHELL_CONFIG" ]; then
-        if ! grep -q "$INSTALL_DIR" "$SHELL_CONFIG"; then
-            echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_CONFIG"
-            echo -e "${GREEN}✓ Se agregó a tu PATH en $SHELL_CONFIG${NC}"
-            echo -e "Ejecuta ${CYAN}source $SHELL_CONFIG${NC} para aplicar."
+for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    if [ -f "$rc" ]; then
+        if ! grep -q "$INSTALL_DIR" "$rc"; then
+            echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$rc"
+            echo -e "${GREEN}✓ Se agregó a tu PATH en $rc${NC}"
         fi
     fi
-fi
+done
 
 echo -e "\n${GREEN}¡Listo! Escribe 'vanguardb' en la terminal.${NC}\n"
